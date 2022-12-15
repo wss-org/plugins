@@ -16,7 +16,7 @@
     "test:npm-publish": "jest --testTimeout 50000 packages/npm-publish --watchAll"
   },
   "workspaces": [
-    "packages/checkout"
+    "packages/ding-talk"
   ],
   "devDependencies": {
     "@serverless-cd/engine": "^0.0.11",

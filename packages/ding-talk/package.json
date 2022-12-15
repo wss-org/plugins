@@ -21,15 +21,13 @@
     "build": "tsc",
     "watch": "tsc -w"
   },
-  "peerDependencies": {
-    "@serverless-cd/core": "^0.0.13"
-  },
   "devDependencies": {
-    "@serverless-cd/core": "^0.0.13",
     "dotenv": "^16.0.3"
   },
   "bugs": {
     "url": "https://github.com/serverless-cd/plugins/issues"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@serverless-cd/core": "^0.0.13"
+  }
 }
