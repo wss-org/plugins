@@ -1,6 +1,6 @@
 {
   "name": "@serverless-cd/ding-talk",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "ding talk",
   "author": "wss-git <wssgryx@163.com>",
   "homepage": "https://github.com/serverless-cd/plugins#readme",
@@ -18,16 +18,12 @@
     "url": "git+https://github.com/serverless-cd/plugins.git"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w"
+    "build": "esbuild src/index.ts --bundle --log-level=error --minify --platform=node --format=cjs --target=node12.4 --outfile=lib/index.js",
+    "watch": "esbuild src/index.ts --bundle --log-level=error --minify --platform=node --format=cjs --target=node10.4 --outfile=lib/index.js --watch"
   },
-  "devDependencies": {
-    "dotenv": "^16.0.3"
-  },
+  "devDependencies": {},
   "bugs": {
     "url": "https://github.com/serverless-cd/plugins/issues"
   },
-  "dependencies": {
-    "@serverless-cd/core": "^0.0.13"
-  }
+  "dependencies": {}
 }
