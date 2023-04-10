@@ -1,8 +1,10 @@
 import { Logger, fs, lodash } from '@serverless-cd/core';
 import simpleGit from 'simple-git';
 import { stringify } from './utils';
-const { get } = lodash;
+const { get, includes } = lodash;
 const debug = require('@serverless-cd/debug')('serverless-cd:checkout');
+
+const GITLAB = ['self-gitlab', 'vpc-gitlab']
 
 interface IConfig {
   provider: string;
@@ -26,7 +28,7 @@ const checkoutForAppCenter = async (config: IConfig) => {
   logger.info(`Git remote add origin ${remote.replace(token, '********')}`);
   await git.addRemote('origin', remote);
   // gitlab 旧版本 git fetch 存在问题，拉取不了代码
-  if (provider === 'self-gitlab' && branch && commit) {
+  if (includes(GITLAB, provider) && branch && commit) {
     logger.info(`Git pull origin ${branch}`);
     await git.pull(`origin`, branch);
     logger.info(`Git reset --hard ${commit}`);
