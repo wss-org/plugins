@@ -33,6 +33,7 @@ const getCacheInputs = (inputs: Record<string, any>, context: Record<string, any
   }
 
   return {
+    cwd: _.get(context, 'cwd'),
     objectKey: _.get(newInputs, 'key', ''),
     region: _.get(newInputs, 'region', ''),
     cachePath: _.get(newInputs, 'path', ''),

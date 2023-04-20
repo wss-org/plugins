@@ -8,6 +8,7 @@ export interface IProps {
   cachePath: string;
   credentials: ICredentials;
   internal?: boolean;
+  cwd?: string;
 }
 
 export interface ICredentials {
@@ -25,6 +26,7 @@ export default class Cache {
   private cloudUrl: string;
   private commonSuffix: string;
   error?: Error;
+  cwd: string | undefined;
 
   constructor(props: IProps, logger: Logger) {
     this.logger = (logger || console) as Logger;
@@ -71,6 +73,8 @@ export default class Cache {
       logger.debug(`New cache error: ${errorMessage}`);
       this.error = new Error(message);
     }
+    this.cwd = _.get(props, 'cwd');
+    logger.debug(`this.cwd: ${this.cwd}`);
   }
 
   run(): { 'cache-hit': boolean, error?: Error } {
@@ -78,7 +82,11 @@ export default class Cache {
       return { 'cache-hit': false, error: this.error };
     }
     // @ts-ignore
-    const { stdout, status } = spawnSync(`ossutil du ${this.cloudUrl} ${this.commonSuffix}`, { timeout: 10000, encoding: 'utf8', shell: true });
+    const { stdout, status } = spawnSync(`ossutil du ${this.cloudUrl} ${this.commonSuffix}`, {
+      timeout: 10000,
+      encoding: 'utf8',
+      shell: true,
+    });
     this.logger.debug(`ossutild du response.status: ${status}; stdout:\n`);
     this.logger.debug(stdout);
     if (status === null || status !== 0) {
@@ -90,7 +98,11 @@ export default class Cache {
       this.logger.debug('cache-hit: true');
       fs.ensureDirSync(this.cachePath);
       try {
-        const cpResponse = spawnSync(`ossutil cp ${this.cloudUrl} ${this.cachePath} ${Cache.cpCommonParams.join(' ')} ${this.commonSuffix}`, { encoding: 'utf8', shell: true });
+        const cpResponse = spawnSync(`ossutil cp ${this.cloudUrl} ${this.cachePath} ${Cache.cpCommonParams.join(' ')} ${this.commonSuffix}`, {
+          encoding: 'utf8',
+          shell: true,
+          cwd: this.cwd,
+        });
         this.logger.debug(`ossutild du response.status: ${cpResponse.status}; stdout:\n`);
         this.logger.debug(cpResponse.stdout);
         return { 'cache-hit': true };
@@ -117,7 +129,11 @@ export default class Cache {
     this.logger.info('Cache not exists, strat push');
     fs.ensureDirSync(this.cachePath);
     try {
-      const cpResponse = spawnSync(`pwd && ls -al ${this.cachePath} && ossutil cp ${this.cachePath} ${this.cloudUrl} ${Cache.cpCommonParams.join(' ')} ${this.commonSuffix}`, { encoding: 'utf8', shell: true });
+      const cpResponse = spawnSync(`pwd && ossutil cp ${this.cachePath} ${this.cloudUrl} ${Cache.cpCommonParams.join(' ')} ${this.commonSuffix}`, {
+        encoding: 'utf8',
+        shell: true,
+        cwd: this.cwd,
+      });
       this.logger.debug(`ossutild du response.status: ${cpResponse.status}; stdout:\n`);
       this.logger.debug(cpResponse.stdout);
     } catch (ex) {

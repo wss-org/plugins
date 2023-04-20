@@ -19,7 +19,7 @@ describe('orm', () => {
         plugin: path.join(__dirname, '..', 'src'),
         id: 'my-cache',
         inputs: {
-          key: 'test1', // objectKey
+          key: 'test2', // objectKey
           path: path.join(__dirname, 'logs'),
           region: 'cn-shenzhen',
           credentials: {
