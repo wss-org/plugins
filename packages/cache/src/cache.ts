@@ -60,6 +60,7 @@ export default class Cache {
     this.cloudUrl = `oss://${bucket}/${objectKey}${_.endsWith(objectKey, '/') ? '' : '/'}`;
     this.logger.debug(`cloudUrl: ${this.cloudUrl}`);
     this.cachePath = _.get(props, 'cachePath', '');
+    this.logger.debug(`cachePath: ${this.cachePath}`);
     if (_.isEmpty(this.cachePath)) {
       errorMessage.push('Path does not meet expectations');
     }
@@ -116,7 +117,7 @@ export default class Cache {
     this.logger.info('Cache not exists, strat push');
     fs.ensureDirSync(this.cachePath);
     try {
-      const cpResponse = spawnSync(`ossutil cp ${this.cachePath} ${this.cloudUrl} ${Cache.cpCommonParams.join(' ')} ${this.commonSuffix}`, { encoding: 'utf8', shell: true });
+      const cpResponse = spawnSync(`pwd && ls -al ${this.cachePath} && ossutil cp ${this.cachePath} ${this.cloudUrl} ${Cache.cpCommonParams.join(' ')} ${this.commonSuffix}`, { encoding: 'utf8', shell: true });
       this.logger.debug(`ossutild du response.status: ${cpResponse.status}; stdout:\n`);
       this.logger.debug(cpResponse.stdout);
     } catch (ex) {
