@@ -80,7 +80,7 @@ export default class Cache {
     const { stdout, status } = spawnSync(`ossutil du ${this.cloudUrl} ${this.commonSuffix}`, { timeout: 10000, encoding: 'utf8', shell: true });
     this.logger.debug(`ossutild du response.status: ${status}; stdout:\n`);
     this.logger.debug(stdout);
-    if (status === null) {
+    if (status === null || status !== 0) {
       this.error = new Error(`ossutil du error`);
       return { 'cache-hit': false, error: this.error };
     }
