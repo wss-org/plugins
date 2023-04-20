@@ -20,10 +20,14 @@ describe('orm', () => {
           key: 'test123', // objectKey
           path: path.join(__dirname, 'logs'),
           region: 'cn-shenzhen',
-          // internal: false,
-          bucket: 'wss-test-shenzhen',
-          accessKeySecret: process.env.accessKeySecret,
-          accessKeyID: process.env.accessKeyID,
+          credentials: {
+            accessKeySecret: process.env.accessKeySecret,
+            accessKeyID: process.env.accessKeyID,
+          },
+          ossConfig: {
+            bucket: 'wss-test-shenzhen',
+            internal: false,
+          },
         }
       },
       { run: 'echo success' },
@@ -33,7 +37,7 @@ describe('orm', () => {
       steps,
       logConfig: { 
         logPrefix,
-        logLevel: 'DEBUG',
+        // logLevel: 'DEBUG',
       },
       inputs: { sts: { ACCESS_KEY_ID: 'xxxxxx' } },
     });
