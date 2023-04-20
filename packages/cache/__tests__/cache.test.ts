@@ -15,22 +15,25 @@ describe('orm', () => {
   test('run', async () => {
     const steps = [
       {
-        plugin: path.join(__dirname, '..', 'src'),
+        plugin: "@serverless-cd/cache",
+        // plugin: path.join(__dirname, '..', 'src'),
+        id: 'my-cache',
         inputs: {
           key: 'test123', // objectKey
           path: path.join(__dirname, 'logs'),
           region: 'cn-shenzhen',
           credentials: {
-            accessKeySecret: process.env.accessKeySecret,
+            // accessKeySecret: process.env.accessKeySecret,
             accessKeyID: process.env.accessKeyID,
           },
+          // - if: {{ steps.my-cache.outputs.cache-hit != 'true' }}
           ossConfig: {
             bucket: 'wss-test-shenzhen',
             internal: false,
           },
         }
       },
-      { run: 'echo success' },
+      { run: `echo {{ steps['my-cache'].outputs['cache-hit'] != 'true' }}` },
     ];
     const engine = new Engine({
       cwd: __dirname,
