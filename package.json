@@ -13,14 +13,15 @@
     "test:checkout": "jest --testTimeout 20000 packages/checkout",
     "test:ding": "jest --testTimeout 10000 packages/ding-talk --watchAll",
     "test:cdn-cache": "jest --testTimeout 10000 packages/cdn-cache --watchAll",
+    "test:cache": "jest --testTimeout 500000 packages/cache --watchAll",
     "test:send-email": "jest --testTimeout 10000 packages/send-email --watchAll",
     "test:npm-publish": "jest --testTimeout 50000 packages/npm-publish --watchAll"
   },
   "workspaces": [
-    "packages/checkout"
+    "packages/cache"
   ],
   "devDependencies": {
-    "@serverless-cd/engine": "^0.0.23",
+    "@serverless-cd/engine": "^0.0.35",
     "@types/jest": "^28.1.6",
     "dotenv": "^16.0.3",
     "jest": "^28.1.3",

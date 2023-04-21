@@ -7,3 +7,4 @@ logs/
 coverage/
 *.log
 .env
+ossutil_output
