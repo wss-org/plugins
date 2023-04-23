@@ -23,6 +23,7 @@ const getCacheInputs = (inputs: Record<string, any>, context: Record<string, any
     credentials: Joi.object({
       accessKeyID: Joi.string().required(),
       accessKeySecret: Joi.string().required(),
+      securityToken: Joi.string(),
     }),
   });
 
@@ -42,6 +43,7 @@ const getCacheInputs = (inputs: Record<string, any>, context: Record<string, any
     credentials: {
       accessKeySecret: _.get(newInputs, 'credentials.accessKeySecret', ''),
       accessKeyID: _.get(newInputs, 'credentials.accessKeyID', ''),
+      securityToken: _.get(newInputs, 'credentials.securityToken'),
     },
   };
 }

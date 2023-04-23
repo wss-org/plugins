@@ -28,7 +28,7 @@
     "url": "https://github.com/serverless-cd/plugins/issues"
   },
   "dependencies": {
-    "@serverless-cd/core": "^0.0.20",
+    "@serverless-cd/core": "^0.0.21",
     "joi": "^17.9.1"
   },
   "devDependencies": {

@@ -19,7 +19,7 @@ describe('orm', () => {
         plugin: path.join(__dirname, '..', 'src'),
         id: 'my-cache',
         inputs: {
-          key: 'test2', // objectKey
+          key: `\${{hashFile('${path.join(__dirname, '.env')}')}}`, // objectKey
           path: path.join(__dirname, 'logs'),
           region: 'cn-shenzhen',
           credentials: {
@@ -33,7 +33,7 @@ describe('orm', () => {
           },
         }
       },
-      { run: `echo {{ steps['my-cache'].outputs['cache-hit'] != 'true' }}` },
+      // { run: `echo {{ steps['my-cache'].outputs['cache-hit'] != 'true' }}` },
     ];
     const engine = new Engine({
       cwd: __dirname,
@@ -42,7 +42,7 @@ describe('orm', () => {
         logPrefix,
         // logLevel: 'DEBUG',
       },
-      inputs: { sts: { ACCESS_KEY_ID: 'xxxxxx' } },
+      inputs: { sts: { ACCESS_KEY_ID: 'xxxxxx' }, },
     });
     await engine.start();
   });
