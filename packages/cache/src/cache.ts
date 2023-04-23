@@ -12,7 +12,8 @@ export interface IProps {
 }
 
 export interface ICredentials {
-  accessKeyID: string;
+  accountId: string;
+  accessKeyId: string;
   accessKeySecret: string;
   securityToken?: string;
 }
@@ -25,8 +26,9 @@ export default class Cache {
   private cachePath: string;
   private cloudUrl: string;
   private commonSuffix: string;
-  error?: Error;
-  cwd: string | undefined;
+  private error?: Error;
+  private cwd: string | undefined;
+  private createBucketName?: string;
 
   constructor(props: IProps, logger: Logger) {
     this.logger = (logger || console) as Logger;
@@ -41,19 +43,21 @@ export default class Cache {
     }
     commonSuffix.push(`-e oss-${region}${internal ? '-internal' : ''}.aliyuncs.com`);
 
-    const { accessKeyID, accessKeySecret, securityToken } = _.get(props, 'credentials', {} as ICredentials);
-    if (_.isEmpty(accessKeyID) || _.isEmpty(accessKeySecret)) {
+    const { accountId, accessKeyId, accessKeySecret, securityToken } = _.get(props, 'credentials', {} as ICredentials);
+    if (_.isEmpty(accessKeyId) || _.isEmpty(accessKeySecret)) {
       errorMessage.push('Credentials does not meet expectations');
     }
-    commonSuffix.push(`-i ${accessKeyID}`);
+    commonSuffix.push(`-i ${accessKeyId}`);
     commonSuffix.push(`-k ${accessKeySecret}`);
     if (securityToken) {
       commonSuffix.push(`-t ${securityToken}`);
     }
     
-    const bucket = _.get(props, 'bucket', '');
+    let bucket = _.get(props, 'bucket', '');
     if (_.isEmpty(bucket)) {
-      errorMessage.push('Bucket does not meet expectations');
+      logger.debug('Bucket does not meet expectations, need to create');
+      bucket = `serverless-cd-${region}-cache-${accountId}`;
+      this.createBucketName = bucket;
     }
     const objectKey = _.get(props, 'objectKey', '');
     if (_.isEmpty(objectKey)) {
@@ -80,6 +84,15 @@ export default class Cache {
   run(): { 'cache-hit': boolean, error?: Error } {
     if (this.error) {
       return { 'cache-hit': false, error: this.error };
+    }
+    if (this.createBucketName) {
+      this.logger.debug(`retry create bucket: ossutil mb oss://${this.createBucketName}`);
+      const { stdout } = spawnSync(`ossutil mb oss://${this.createBucketName} ${this.commonSuffix}; stdout:`, {
+        timeout: 10000,
+        encoding: 'utf8',
+        shell: true,
+      });
+      this.logger.debug(stdout);
     }
     // @ts-ignore
     const { stdout, status } = spawnSync(`ossutil du ${this.cloudUrl} ${this.commonSuffix}`, {
