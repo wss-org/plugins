@@ -1,6 +1,6 @@
 import { lodash as _, Logger, getInputs, getStepContext, getCredentials } from '@serverless-cd/core';
 import Joi from 'joi';
-import Cache, { IProps } from './cache';
+import Cache, { IProps, ICredentials } from './cache';
 
 interface ISchemaError {
   error: Error;
@@ -28,7 +28,7 @@ const getCacheInputs = async (inputs: Record<string, any>, context: Record<strin
     return { error };
   }
 
-  const credentials = await getCredentials(newInputs, context);
+  const credentials = await getCredentials(newInputs, context) as ICredentials;
   const { error: credentialError } = Joi.object({
     accountId: Joi.string().required(),
     accessKeyId: Joi.string().required(),

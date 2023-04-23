@@ -15,6 +15,10 @@ describe('orm', () => {
   test('run', async () => {
     const steps = [
       {
+        run: 'echo "请关联一个阿里云密钥" && xxxxx',
+        if: `\${{typeof cloudSecrets.AccessKeyID !== 'string'}}`
+      },
+      {
         // plugin: "@serverless-cd/cache",
         plugin: path.join(__dirname, '..', 'src'),
         id: 'my-cache',
