@@ -1,6 +1,6 @@
 {
   "name": "@serverless-cd/cache",
-  "version": "0.0.5",
+  "version": "0.0.8",
   "description": "> TODO: description",
   "author": "wss-git <wssgryx@163.com>",
   "homepage": "https://github.com/serverless-cd/plugins#readme",
@@ -28,7 +28,7 @@
     "url": "https://github.com/serverless-cd/plugins/issues"
   },
   "dependencies": {
-    "@serverless-cd/core": "^0.0.20",
+    "@serverless-cd/core": "^0.0.24",
     "joi": "^17.9.1"
   },
   "devDependencies": {

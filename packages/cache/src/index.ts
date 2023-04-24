@@ -1,54 +1,63 @@
-import { lodash as _, Logger, getInputs, getStepContext } from '@serverless-cd/core';
+import { lodash as _, Logger, getInputs, getStepContext, getCredentials } from '@serverless-cd/core';
 import Joi from 'joi';
-import Cache, { IProps } from './cache';
+import Cache, { IProps, ICredentials } from './cache';
 
 interface ISchemaError {
   error: Error;
 };
 
-const getCacheInputs = (inputs: Record<string, any>, context: Record<string, any>, logger: Logger): IProps | ISchemaError => {
+const getCacheInputs = async (inputs: Record<string, any>, context: Record<string, any>, logger: Logger): Promise<IProps | ISchemaError> => {
   logger.debug(`context: ${JSON.stringify(context)}`);
   logger.debug(`inputs: ${JSON.stringify(inputs)}`);
-  const newInputs = getInputs(inputs, context) as unknown;
+  const newInputs = getInputs(inputs, context) as Record<string, any>;
   logger.debug(`newInputs: ${JSON.stringify(newInputs)}`);
 
   const Schema = Joi.object({
     key: Joi.string().required(),
     path: Joi.string().required(),
-    region: Joi.string().required(),
+    region: Joi.string(),
     ossConfig: Joi.object({
-      bucket: Joi.string().required(),
+      bucket: Joi.string(),
       internal: Joi.boolean(),
-    }).required(),
-    credentials: Joi.object({
-      accessKeyID: Joi.string().required(),
-      accessKeySecret: Joi.string().required(),
     }),
   });
-
+  
   const { error } = Schema.validate(newInputs, { abortEarly: false, convert: false, allowUnknown: true });
   if (error) {
     logger.debug(`check input error: ${error}`);
     return { error };
   }
 
+  const credentials = await getCredentials(newInputs, context) as ICredentials;
+  const { error: credentialError } = Joi.object({
+    accountId: Joi.string().required(),
+    accessKeyId: Joi.string().required(),
+    accessKeySecret: Joi.string().required(),
+    securityToken: Joi.string(),
+  }).validate(credentials, { abortEarly: false, convert: false, allowUnknown: true });
+
+  if (credentialError) {
+    logger.debug(`get credentials error: ${credentialError}`);
+    return { error: credentialError };
+  }
+
+  const workerRunRegion = _.get(context, 'inputs.workerRunConfig.region');
+  const region = _.get(newInputs, 'region', workerRunRegion);
+
   return {
+    region,
     cwd: _.get(context, 'cwd'),
     objectKey: _.get(newInputs, 'key', ''),
-    region: _.get(newInputs, 'region', ''),
     cachePath: _.get(newInputs, 'path', ''),
     bucket: _.get(newInputs, 'ossConfig.bucket', ''),
-    internal: _.get(newInputs, 'ossConfig.internal', false),
-    credentials: {
-      accessKeySecret: _.get(newInputs, 'credentials.accessKeySecret', ''),
-      accessKeyID: _.get(newInputs, 'credentials.accessKeyID', ''),
-    },
+    internal: _.get(newInputs, 'ossConfig.internal', workerRunRegion === region),
+    credentials,
   };
 }
 
 export const run = async (inputs: Record<string, any>, context: Record<string, any>, logger: Logger) => {
   logger.info('start @serverless-cd/cache run');
-  const props = getCacheInputs(inputs, context, logger);
+  const props = await getCacheInputs(inputs, context, logger);
   if ((props as ISchemaError).error) {
     const error = _.get(props, 'error') as unknown as Error;
     logger.warn(`The entry information is wrong: ${error.message}`);
@@ -62,7 +71,7 @@ export const run = async (inputs: Record<string, any>, context: Record<string, a
 
 export const postRun = async (inputs: Record<string, any>, context: Record<string, any>, logger: Logger) => {
   logger.info('start @serverless-cd/cache postRun');
-  const props = getCacheInputs(inputs, context, logger);
+  const props = await getCacheInputs(inputs, context, logger);
   if ((props as ISchemaError).error) {
     const error = _.get(props, 'error') as unknown as Error;
     logger.warn(`The entry information is wrong: ${error.message}`);

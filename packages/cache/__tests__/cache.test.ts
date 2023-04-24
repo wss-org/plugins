@@ -15,34 +15,42 @@ describe('orm', () => {
   test('run', async () => {
     const steps = [
       {
+        run: 'echo "请关联一个阿里云密钥" && xxxxx',
+        if: `\${{typeof cloudSecrets.AccessKeyID !== 'string'}}`
+      },
+      {
         // plugin: "@serverless-cd/cache",
         plugin: path.join(__dirname, '..', 'src'),
         id: 'my-cache',
         inputs: {
-          key: 'test2', // objectKey
+          key: `\${{hashFile('${path.join(__dirname, '.env')}')}}`, // objectKey
           path: path.join(__dirname, 'logs'),
-          region: 'cn-shenzhen',
+          // region: 'cn-shenzhen',
           credentials: {
             accessKeySecret: process.env.accessKeySecret,
-            accessKeyID: process.env.accessKeyID,
+            accessKeyId: process.env.accessKeyID,
           },
-          // - if: {{ steps.my-cache.outputs.cache-hit != 'true' }}
-          ossConfig: {
-            bucket: 'wss-test-shenzhen',
-            internal: false,
-          },
+          // ossConfig: {
+          //   bucket: 'wss-test-shenzhen',
+          //   internal: false,
+          // },
         }
       },
-      { run: `echo {{ steps['my-cache'].outputs['cache-hit'] != 'true' }}` },
+      // { run: `echo {{ steps['my-cache'].outputs['cache-hit'] != 'true' }}` },
     ];
     const engine = new Engine({
       cwd: __dirname,
       steps,
       logConfig: { 
         logPrefix,
-        // logLevel: 'DEBUG',
+        logLevel: 'DEBUG',
       },
-      inputs: { sts: { ACCESS_KEY_ID: 'xxxxxx' } },
+      inputs: {
+        sts: { ACCESS_KEY_ID: 'xxxxxx' },
+        workerRunConfig: {
+          region: 'cn-shenzhen',
+        },
+      },
     });
     await engine.start();
   });
