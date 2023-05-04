@@ -86,8 +86,8 @@ export default class Cache {
       return { 'cache-hit': false, error: this.error };
     }
     if (this.createBucketName) {
-      this.logger.debug(`retry create bucket: ossutil mb oss://${this.createBucketName}`);
-      const { stdout } = spawnSync(`ossutil mb oss://${this.createBucketName} ${this.commonSuffix}; stdout:`, {
+      this.logger.debug(`retry create bucket: ossutil mb oss://${this.createBucketName}; stdout:`);
+      const { stdout } = spawnSync(`ossutil mb oss://${this.createBucketName} ${this.commonSuffix}`, {
         timeout: 10000,
         encoding: 'utf8',
         shell: true,

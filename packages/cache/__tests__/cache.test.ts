@@ -26,10 +26,10 @@ describe('orm', () => {
           key: `\${{hashFile('${path.join(__dirname, '.env')}')}}`, // objectKey
           path: path.join(__dirname, 'logs'),
           // region: 'cn-shenzhen',
-          credentials: {
-            accessKeySecret: process.env.accessKeySecret,
-            accessKeyId: process.env.accessKeyID,
-          },
+          // credentials: {
+          //   accessKeySecret: process.env.accessKeySecret,
+          //   accessKeyId: process.env.accessKeyID,
+          // },
           // ossConfig: {
           //   bucket: 'wss-test-shenzhen',
           //   internal: false,
