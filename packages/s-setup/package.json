@@ -1,0 +1,36 @@
+{
+  "name": "@serverless-cd/s-setup",
+  "version": "0.0.1",
+  "description": "> TODO: description",
+  "author": "wss-git <wssgryx@163.com>",
+  "homepage": "https://github.com/serverless-cd/plugins#readme",
+  "license": "ISC",
+  "main": "./lib/index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-cd/plugins.git"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/serverless-cd/plugins/issues"
+  },
+  "dependencies": {
+    "@serverless-cd/core": "^0.0.24"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.190"
+  }
+}
