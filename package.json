@@ -14,6 +14,7 @@
     "test:ding": "jest --testTimeout 10000 packages/ding-talk --watchAll",
     "test:cdn-cache": "jest --testTimeout 10000 packages/cdn-cache --watchAll",
     "test:cache": "jest --testTimeout 500000 packages/cache --watchAll",
+    "test:setup-runtime": "jest --testTimeout 500000 packages/setup-runtime --watchAll",
     "test:send-email": "jest --testTimeout 10000 packages/send-email --watchAll",
     "test:npm-publish": "jest --testTimeout 50000 packages/npm-publish --watchAll"
   },
