@@ -1,4 +1,5 @@
-import { Logger, lodash as _, artTemplate } from '@serverless-cd/core';
+import { Logger, lodash as _ } from '@serverless-cd/core';
+import artTemplate from 'art-template';
 import https from 'https';
 import crypto from 'crypto';
 

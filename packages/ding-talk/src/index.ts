@@ -7,10 +7,10 @@ export const run = async (
   logger: Logger,
 ) => {
   logger.info('start ding-talk');
-  logger.info(`inputs: ${JSON.stringify(inputs)}`);
+  logger.debug(`inputs: ${JSON.stringify(inputs)}`);
+  logger.debug(`context: ${JSON.stringify(context)}`);
   const newInputs = getInputs(inputs, context) as unknown as IProps;
-  logger.info(`newInputs: ${JSON.stringify(newInputs)}`);
-  logger.info(`context: ${JSON.stringify(context)}`);
+  logger.debug(`newInputs: ${JSON.stringify(newInputs)}`);
   const dingTalk = new DingTalk(newInputs, context, logger);
   await dingTalk.send();
   return { status: 'success' };

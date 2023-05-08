@@ -1,6 +1,6 @@
 {
   "name": "@serverless-cd/ding-talk",
-  "version": "0.0.3",
+  "version": "0.0.7",
   "description": "ding talk",
   "author": "wss-git <wssgryx@163.com>",
   "homepage": "https://github.com/serverless-cd/plugins#readme",
@@ -22,10 +22,11 @@
     "watch": "tsc -w"
   },
   "peerDependencies": {
-    "@serverless-cd/core": "^0.0.13"
+    "art-template": "^4.13.2",
+    "@serverless-cd/core": "^0.0.25"
   },
   "devDependencies": {
-    "@serverless-cd/core": "^0.0.13",
+    "@serverless-cd/core": "^0.0.25",
     "dotenv": "^16.0.3"
   },
   "bugs": {
