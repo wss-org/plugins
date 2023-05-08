@@ -1,6 +1,6 @@
 {
   "name": "@serverless-cd/ding-talk",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "ding talk",
   "author": "wss-git <wssgryx@163.com>",
   "homepage": "https://github.com/serverless-cd/plugins#readme",
