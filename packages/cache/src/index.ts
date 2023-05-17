@@ -12,6 +12,35 @@ const getCacheInputs = async (inputs: Record<string, any>, context: Record<strin
   const newInputs = getInputs(inputs, context) as Record<string, any>;
   logger.debug(`newInputs: ${JSON.stringify(newInputs)}`);
 
+  const credentials = await getCredentials(newInputs, context) as ICredentials;
+  const { error: credentialError } = Joi.object({
+    accountId: Joi.string().required(),
+    accessKeyId: Joi.string().required(),
+    accessKeySecret: Joi.string().required(),
+    securityToken: Joi.string(),
+  }).validate(credentials, { abortEarly: false, convert: false, allowUnknown: true });
+
+  if (credentialError) {
+    logger.debug(`get credentials error: ${credentialError}`);
+    return { error: credentialError };
+  }
+
+  // 兼容应用中心的逻辑
+  if (_.get(context, 'inputs.ctx.data.cacheConfig.oss')) {
+    const currentRegion = _.get(context, 'inputs.currentRegion');
+    const region = _.get(context, 'inputs.ctx.data.cacheConfig.oss.regionId');
+
+    return {
+      region,
+      cwd: _.get(context, 'cwd', process.cwd()),
+      objectKey: _.get(newInputs, 'key', ''),
+      cachePath: _.get(newInputs, 'path', ''),
+      bucket: _.get(context, 'inputs.ctx.data.cacheConfig.oss.bucketName', ''),
+      internal: currentRegion === region,
+      credentials,
+    };
+  }
+
   const Schema = Joi.object({
     key: Joi.string().required(),
     path: Joi.string().required(),
@@ -26,19 +55,6 @@ const getCacheInputs = async (inputs: Record<string, any>, context: Record<strin
   if (error) {
     logger.debug(`check input error: ${error}`);
     return { error };
-  }
-
-  const credentials = await getCredentials(newInputs, context) as ICredentials;
-  const { error: credentialError } = Joi.object({
-    accountId: Joi.string().required(),
-    accessKeyId: Joi.string().required(),
-    accessKeySecret: Joi.string().required(),
-    securityToken: Joi.string(),
-  }).validate(credentials, { abortEarly: false, convert: false, allowUnknown: true });
-
-  if (credentialError) {
-    logger.debug(`get credentials error: ${credentialError}`);
-    return { error: credentialError };
   }
 
   const workerRunRegion = _.get(context, 'inputs.workerRunConfig.region');

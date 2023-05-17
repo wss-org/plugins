@@ -54,6 +54,36 @@ describe('orm', () => {
     });
     await engine.start();
   });
+
+  test.only('run-application', async () => {
+    const steps = [
+      {
+        // plugin: "@serverless-cd/cache",
+        plugin: path.join(__dirname, '..', 'src'),
+        id: 'my-cache',
+        inputs: {
+          key: `\${{hashFile('${path.join(__dirname, '.env')}')}}`, // objectKey
+          path: path.join(__dirname, 'logs'),
+        }
+      },
+    ];
+    const engine = new Engine({
+      steps,
+      logConfig: { 
+        logPrefix,
+        logLevel: 'DEBUG',
+      },
+      inputs: {
+        uid: 'xxxxx',
+        requestId: 'xxxxxxx',
+        ctx: { data: { cacheConfig: { oss: { bucketName: '', regionId: 'cn-shenzhen' } }}},
+        context: {},
+        sts: { accessKeyId: process.env.accessKeyID, accessKeySecret: process.env.accessKeySecret },
+        currentRegion: 'cn-shenzhen',
+      },
+    });
+    await engine.start();
+  })
 });
 
 
