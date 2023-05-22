@@ -2,12 +2,27 @@ import { lodash as _, Logger, getInputs, getCredentials } from '@serverless-cd/c
 import { spawnSync } from 'child_process';
 import setup, { IProps, ICredentials } from './setup';
 
+async function getCredential(inputs: any, context: any): Promise<ICredentials> {
+  const credentials = {
+    accountId: _.get(context, 'inputs.sts.accountId') || _.get(context, 'inputs.uid'),
+    accessKeyId: _.get(context, 'inputs.sts.accessKeyId'),
+    accessKeySecret: _.get(context, 'inputs.sts.accessKeySecret'),
+    securityToken: _.get(context, 'inputs.sts.securityToken'),
+  };
+  if (credentials.accountId && credentials.accessKeyId && credentials.accessKeySecret) {
+    return credentials;
+  }
+
+  return await getCredentials(inputs, context) as ICredentials;
+}
+
 const getCoreInputs = async (inputs: Record<string, any>, context: Record<string, any>, logger: Logger): Promise<IProps> => {
   logger.debug(`context: ${JSON.stringify(context)}`);
   logger.debug(`inputs: ${JSON.stringify(inputs)}`);
   const newInputs = getInputs(inputs, context) as Record<string, any>;
   logger.debug(`newInputs: ${JSON.stringify(newInputs)}`);
-  const credentials = await getCredentials(newInputs, context) as ICredentials;
+  const credentials = await getCredential(newInputs, context) as ICredentials;
+  
   return {
     alias: _.get(inputs, 'alias', 'default'),
     credentials
