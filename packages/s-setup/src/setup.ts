@@ -42,6 +42,7 @@ export default function setup(props: IProps, logger: Logger) {
   if (addRes.stderr) {
     logger.error(addRes.stderr);
   }
+  process.env.serverless_devs_access_cicd_alias_name = alias;
 }
 
 function checkDevs(logger: Logger) {
